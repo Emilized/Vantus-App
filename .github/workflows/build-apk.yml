@@ -9,15 +9,20 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Expo
-        uses: expo/expo-github-action@v8
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          expo-version: latest
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
+          node-version: 20
+          cache: '' # This disables the broken cache service
 
       - name: Install Dependencies
-        run: npm install
+        run: npm install --no-audit --no-fund
 
-      - name: Build APK
-        run: npx eas-cli build --platform android --profile preview --non-interactive
+      - name: Build Web for Vercel
+        run: npx expo export --platform web
+
+      - name: Upload Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vantus-Update
+          path: dist/
