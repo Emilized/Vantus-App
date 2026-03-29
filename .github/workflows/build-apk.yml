@@ -1,13 +1,23 @@
-name: Build
-on: [push]
+name: Build Vantus
+on: [push, workflow_dispatch]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm install
-      - run: npx expo export --platform web
-      - uses: actions/upload-artifact@v4
+      - uses: actions/setup-node@v4
         with:
-          name: Vantus-Preview
+          node-version: 20
+          
+      - name: Install All Dependencies
+        run: npm install
+
+      - name: Export Web Version
+        run: npx expo export --platform web
+
+      - name: Upload Vantus App
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vantus-Web-App
           path: dist/
