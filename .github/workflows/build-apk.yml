@@ -27,7 +27,15 @@ jobs:
           npx expo prebuild --platform android
           npx expo export --platform android
 
-      - name: Upload APK
+      - name:       - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vantus-Build
+          # This updated path covers both possible Expo export locations
+          path: |
+            dist/*.apk
+            android/app/build/outputs/apk/release/*.apk
+
         uses: actions/upload-artifact@v4
         with:
           name: Vantus-Final-APK
