@@ -1,34 +1,16 @@
-name: Build Vantus APK
+name: Build Vantus
 on: [push, workflow_dispatch]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      - name: Install Tools
-        run: npm install -g expo-cli @expo/ngrok
-
-      - name: Install Deps
-        run: npm install
-
-      - name: Build APK
-        run: |
-          npx expo prebuild --platform android --no-install
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
+          node-version: 20
+      - run: npm install
+      - run: npx expo export --platform web
+      - uses: actions/upload-artifact@v4
         with:
-          name: Vantus-Final-APK
-          path: android/app/build/outputs/apk/release/*.apk
+          name: Vantus-Web-App
+          path: dist/
