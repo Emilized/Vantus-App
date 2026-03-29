@@ -5,39 +5,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Install Dependencies
+      - name: Install Tools
+        run: npm install -g expo-cli @expo/ngrok
+
+      - name: Install Deps
+        run: npm install
+
+      - name: Build APK
         run: |
-          npm install -g expo-cli
-          npm install
-
-      - name: Accept Android Licenses
-        run: yes | sdkmanager --licenses || true
-
-      - name: Prebuild
-        run: npx expo prebuild --platform android --no-install
-
-      - name: Build with Gradle
-        run: |
+          npx expo prebuild --platform android --no-install
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon
 
-      - name: Upload APK
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Vantus-Final
+          name: Vantus-Final-APK
           path: android/app/build/outputs/apk/release/*.apk
