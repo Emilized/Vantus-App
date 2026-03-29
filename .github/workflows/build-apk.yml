@@ -9,19 +9,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
         with:
-          node-version: 20
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install Dependencies
         run: npm install
 
-      - name: Build Android APK
-        run: npx expo export --platform android
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Vantus-Android-APK
-          path: dist/*.apk
+      - name: Build APK
+        run: npx eas-cli build --platform android --profile preview --non-interactive
