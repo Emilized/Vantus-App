@@ -11,26 +11,28 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22 # Updated for 2026 standards
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Expo
-        run: npm install --global expo-cli
-
       - name: Install Dependencies
-        run: npm install
-
-      - name: Prebuild & Export
         run: |
-          npx expo prebuild --platform android
-          npx expo export --platform android
+          npm install -g expo-cli
+          npm install
 
-      - name: Upload APK Artifact
+      - name: Generate Android Project
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Build APK with Gradle
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Vantus-Build
-          path: |
-            dist/*.apk
-            android/app/build/outputs/apk/release/*.apk
+          name: Vantus-2.0-APK
+          # This wildcard finds it in the deep Gradle folders
+          path: android/app/build/outputs/apk/release/*.apk
